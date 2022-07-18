@@ -2,11 +2,15 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+int slow_speed = 150;
+int medium_speed = 200;
+int fast_speed = 255;
 
 // Wi-Fi 2.4GHz ONLY
 // Do not upload to ESP32 without first setting these two credentials!
 const char* ssid = "...";
 const char* password = "...";
+int carspeed = medium_speed; //slow_speed, medium_speed, or fast_speed
 
 WebServer server(80);
 
@@ -40,11 +44,7 @@ int dutyCycle = 200;
 #define MEDIUM_STATE 7
 #define FAST_STATE 8
 
-int slow_speed = 150;
-int medium_speed = 200;
-int fast_speed = 255;
 int state = STOP;
-int carspeed = slow_speed;
 String ptr = "";
 
 void handleRoot() {
@@ -83,7 +83,7 @@ void setup(void) {
   ptr += "</head>";
   ptr += "<body>";
   ptr += "<div class=\"row\">";
-  ptr += "<div class=\"column\">";
+  /*ptr += "<div class=\"column\">";
   ptr += "<table>";
   ptr += "<tbody>";
   ptr += "<tr>";
@@ -97,7 +97,7 @@ void setup(void) {
   ptr += "</tr>";
   ptr += "</tbody>";
   ptr += "</table>";
-  ptr += "</div>";
+  ptr += "</div>";*/
   ptr += "<div class=\"column\">";
   ptr += "<table>";
   ptr += "<tbody>";
@@ -177,20 +177,23 @@ void setup(void) {
     state = RIGHT;
   });
 
-  server.on("/slow", []() {
+  /*server.on("/slow", []() {
     server.send(200, "text/html", ptr);
     carspeed = slow_speed;
+    speedState = SLOW_STATE;
   });
 
   server.on("/medium", []() {
     server.send(200, "text/html", ptr);
     carspeed = medium_speed;
+    speedState = MEDIUM_STATE;
   });
 
   server.on("/fast", []() {
     server.send(200, "text/html", ptr);
     carspeed = fast_speed;
-  });
+    speedState = FAST_STATE;
+  });*/
 
   server.onNotFound(handleNotFound);
 
@@ -227,7 +230,6 @@ void forward(int dutyCycle) {
   digitalWrite(in1B, HIGH);
   digitalWrite(in2B, LOW);     
   ledcWrite(pwmChannelA, dutyCycle);
-  delay(500);
   ledcWrite(pwmChannelB, dutyCycle);               
   delay(500);
 }
@@ -239,7 +241,6 @@ void reverse(int dutyCycle) {
   digitalWrite(in1B, LOW);
   digitalWrite(in2B, HIGH);     
   ledcWrite(pwmChannelA, dutyCycle);
-  delay(500);
   ledcWrite(pwmChannelB, dutyCycle);               
   delay(500);
 }
@@ -250,7 +251,6 @@ void brake(){
   digitalWrite(in1B, HIGH);
   digitalWrite(in2B, HIGH); 
   ledcWrite(pwmChannelA, 0);
-  delay(500);
   ledcWrite(pwmChannelB, 0); 
   delay(500);
   digitalWrite(Standby, LOW);
@@ -262,7 +262,6 @@ void left(int dutyCycle)
   digitalWrite(in1A, LOW);
   digitalWrite(in2A, HIGH);
   ledcWrite(pwmChannelA, dutyCycle);
-  delay(500);
   
   digitalWrite(in1B, HIGH);
   digitalWrite(in2B, LOW);
@@ -276,7 +275,6 @@ void right(int dutyCycle)
   digitalWrite(in1A, HIGH);
   digitalWrite(in2A, LOW);
   ledcWrite(pwmChannelA, dutyCycle);
-  delay(500);
   
   digitalWrite(in1B, LOW);
   digitalWrite(in2B, HIGH);
@@ -294,6 +292,20 @@ void loop(void) {
 
   server.handleClient();
   delay(2);//allow the cpu to switch to other tasks
+  
+  /*switch(speedState){
+    case SLOW_STATE:
+      carspeed = slow_speed;
+      break;
+    case MEDIUM_STATE:
+      carspeed = medium_speed;
+      state=DELAY;
+      break;
+    case FAST_STATE:
+      carspeed = fast_speed;
+      state=DELAY;
+      break;
+  }*/
   
   switch(state){
     case FWD:
