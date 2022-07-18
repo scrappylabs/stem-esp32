@@ -3,6 +3,8 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 
+// Wi-Fi 2.4GHz ONLY
+// Do not upload to ESP32 without first setting these two credentials!
 const char* ssid = "...";
 const char* password = "...";
 
@@ -37,15 +39,11 @@ int dutyCycle = 200;
 #define SLOW_STATE 6
 #define MEDIUM_STATE 7
 #define FAST_STATE 8
-#define SLOW 200
-#define MEDIUM 225
-#define FAST 255
 
-int slow_speed = 200;
-int medium_speed = 225;
+int slow_speed = 150;
+int medium_speed = 200;
 int fast_speed = 255;
 int state = STOP;
-int speedState = SLOW;
 int carspeed = slow_speed;
 String ptr = "";
 
@@ -181,17 +179,17 @@ void setup(void) {
 
   server.on("/slow", []() {
     server.send(200, "text/html", ptr);
-    speedState = SLOW_STATE;
+    carspeed = slow_speed;
   });
 
   server.on("/medium", []() {
     server.send(200, "text/html", ptr);
-    speedState = MEDIUM_STATE;
+    carspeed = medium_speed;
   });
 
   server.on("/fast", []() {
     server.send(200, "text/html", ptr);
-    speedState = FAST_STATE;
+    carspeed = fast_speed;
   });
 
   server.onNotFound(handleNotFound);
@@ -296,21 +294,6 @@ void loop(void) {
 
   server.handleClient();
   delay(2);//allow the cpu to switch to other tasks
-  
-  switch(speedState){
-    case SLOW:
-      carspeed = SLOW;
-      speedState = SLOW_STATE;
-      break;
-    case MEDIUM:
-      carspeed = MEDIUM;
-      speedState = MEDIUM_STATE;
-      break;
-    case FAST:
-      carspeed = FAST;
-      speedState = FAST_STATE;
-      break;
-  }
   
   switch(state){
     case FWD:
