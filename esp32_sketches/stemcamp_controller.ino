@@ -7,8 +7,8 @@
 #include <WiFi.h>
 
 // Replace with your network credentials
-const char* ssid     = "kiheiAP";
-const char* password = "password";
+const char* ssid     = "stemcamp";
+const char* password = "stemcamp2023";
 
 // Set web server port number to 80
 WiFiServer server(80);
