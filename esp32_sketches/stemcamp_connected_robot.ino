@@ -16,8 +16,8 @@
 #include <ESPmDNS.h>
 
 #define BLE_NAME "ESP32-Team-X-YOURNAME"
-const char* ssid = "KSUGuest";
-const char* password = "kennesaw";
+const char* ssid = "stemcamp";
+const char* password = "stemcamp2023";
 
 
 
