@@ -9,10 +9,10 @@
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 
-const char* ssid = "BYLD";
-const char* password = "";
+const char* ssid = "stemcamp";
+const char* password = "stemcamp2023";
 String robotname = "BIGBOT";
-const char * regserverIP = "10.44.32.249";
+const char * regserverIP = "10.44.114.6";
 const int regserverPort = 11000;
 
 std::string avalue;
